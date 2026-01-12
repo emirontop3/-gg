@@ -1,6 +1,8 @@
 {
+  "name": "insta-bot",
+  "version": "1.0.0",
   "dependencies": {
-    "instagram-private-api": "^1.45.3",
+    "instagram-web-api": "^2.2.2",
     "express": "^4.18.2"
   }
 }
