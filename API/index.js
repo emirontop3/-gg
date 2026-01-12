@@ -1,30 +1,29 @@
-const { IgApiClient } = require('instagram-private-api');
+const Instagram = require('instagram-web-api');
 const express = require('express');
 const app = express();
 
-const ig = new IgApiClient();
+const username = 'Emooooooooxx';
+const password = 'yhwiqoqowowk';
 
 app.get('*', async (req, res) => {
+  const client = new Instagram({ username, password });
+  
   try {
-    // Giriş Ayarları
-    ig.state.generateDevice('Emooooooooxx');
-    await ig.simulate.preLoginFlow();
-    await ig.account.login('Emooooooooxx', 'yhwiqoqowowk');
-
-    // 1. Hedef kullanıcıyı (emirattaa) bul
-    const targetUser = await ig.user.searchExact('emirattaa');
+    // Giriş yap
+    await client.login();
     
-    // 2. Mesaj gönderilecek bir kanal (thread) oluştur/bul
-    const thread = ig.entity.directThread([targetUser.pk.toString()]);
+    // Hedef kullanıcıyı bul (emirattaa)
+    const target = await client.getUserByUsername({ username: 'emirattaa' });
     
-    // 3. Mesajı gönder
-    await thread.broadcastText('Merhaba emirattaa! Bu mesaj Vercel üzerinden otomatik gönderildi.');
+    // Mesaj gönder
+    await client.addDirectMessage({ 
+      userId: target.id, 
+      text: 'Kobra devrede! Bu mesaj otomatiktir.' 
+    });
 
-    res.status(200).send(`Mesaj @emirattaa kullanıcısına başarıyla iletildi!`);
+    res.send('Mesaj başarıyla gönderildi, Kobra!');
   } catch (err) {
-    console.error(err);
-    // Hata Instagram'ın botu engellemesi veya kullanıcı bulunamaması olabilir
-    res.status(500).send("Hata: " + err.message);
+    res.status(500).send('Hata: ' + err.message);
   }
 });
 
